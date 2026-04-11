@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Auth — Sistema de Gestión Integral de Leads</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:         #0b0f1a;
+      --surface:    #111827;
+      --surface-2:  #1c2537;
+      --border:     #1e2d45;
+      --accent:     #00c896;
+      --accent-2:   #0ea5e9;
+      --danger:     #f43f5e;
+      --text:       #e2e8f0;
+      --muted:      #64748b;
+      --radius:     10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+    }
+    header { text-align: center; margin-bottom: 32px; }
+    .badge {
+      display: inline-block;
+      background: rgba(0,200,150,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0,200,150,0.3);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    header h1 { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 700; color: #fff; }
+    header h1 span { color: var(--accent); }
+    header p { margin-top: 8px; color: var(--muted); font-size: 13px; }
+    .token-bar {
+      width: 100%; max-width: 900px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .token-label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; white-space: nowrap; }
+    .token-value { flex: 1; font-family: 'Fira Code', monospace; font-size: 11px; color: var(--accent-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; width: 100%; max-width: 900px; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .card-title { font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .icon { width: 26px; height: 26px; border-radius: 6px; background: rgba(0,200,150,0.1); display: flex; align-items: center; justify-content: center; font-size: 13px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+    input {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 9px 12px; color: var(--text); font-family: 'Sora', sans-serif; font-size: 13px; outline: none;
+    }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,200,150,0.15); }
+    .btn { padding: 10px 18px; border: none; border-radius: 6px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: #0b0f1a; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-secondary:hover { border-color: var(--accent-2); color: var(--accent-2); }
+    .divider { height: 1px; background: var(--border); }
+    .status { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+    .dot.ok  { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+    .dot.err { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+    .response {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px; font-family: 'Fira Code', monospace; font-size: 11px; line-height: 1.7;
+      color: var(--muted); white-space: pre-wrap; word-break: break-all;
+      min-height: 60px; max-height: 240px; overflow-y: auto;
+    }
+    .response.ok  { border-color: var(--accent); color: var(--accent); }
+    .response.err { border-color: var(--danger);  color: var(--danger); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">GA7-220501096-AA5-EV01</div>
+  <h1>Sistema de Gestión Integral de <span>Leads</span></h1>
+  <p>Servicio web de autenticación — Registro e Inicio de Sesión</p>
+</header>
+
+<div class="token-bar">
+  <span class="token-label">🔑 Token activo</span>
+  <span class="token-value" id="tokenDisplay">Sin sesión iniciada</span>
+  <button class="btn btn-secondary" onclick="limpiarToken()" style="font-size:11px;padding:5px 10px;">Limpiar</button>
+</div>
+
+<div class="grid">
+
+  <!-- REGISTRO -->
+  <div class="card">
+    <div class="card-title"><div class="icon">📋</div>Registro de usuario</div>
+    <div class="field"><label>Nombre completo</label><input id="reg-nombre" type="text" placeholder="Ej. Juan Pérez" /></div>
+    <div class="field"><label>Correo electrónico</label><input id="reg-email" type="email" placeholder="correo@ejemplo.com" /></div>
+    <div class="field"><label>Contraseña</label><input id="reg-password" type="password" placeholder="Mínimo 6 caracteres" /></div>
+    <div class="field"><label>Rol</label><input id="reg-rol" type="text" value="asesor" /></div>
+    <button class="btn btn-primary" onclick="registrar()">Crear cuenta</button>
+    <div class="divider"></div>
+    <div class="status"><span class="dot" id="reg-dot"></span><span id="reg-status">En espera</span></div>
+    <div class="response" id="reg-response">// La respuesta aparecerá aquí</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="card">
+    <div class="card-title"><div class="icon">🔐</div>Inicio de sesión</div>
+    <div class="field"><label>Correo electrónico</label><input id="login-email" type="email" value="admin@leads.com" /></div>
+    <div class="field"><label>Contraseña</label><input id="login-password" type="password" value="Admin2024*" /></div>
+    <button class="btn btn-primary" onclick="iniciarSesion()">Iniciar sesión</button>
+    <div class="divider"></div>
+    <div class="status"><span class="dot" id="login-dot"></span><span id="login-status">En espera</span></div>
+    <div class="response" id="login-response">// La respuesta aparecerá aquí</div>
+  </div>
+
+  <!-- PERFIL PROTEGIDO -->
+  <div class="card">
+    <div class="card-title"><div class="icon">👤</div>Ruta protegida — Perfil</div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;">Requiere token JWT válido obtenido en el inicio de sesión. Demuestra el funcionamiento del middleware de autorización.</p>
+    <button class="btn btn-secondary" onclick="obtenerPerfil()">Consultar perfil</button>
+    <div class="divider"></div>
+    <div class="status"><span class="dot" id="perfil-dot"></span><span id="perfil-status">En espera</span></div>
+    <div class="response" id="perfil-response">// La respuesta aparecerá aquí</div>
+  </div>
+
+  <!-- ESTADO DEL SERVIDOR -->
+  <div class="card">
+    <div class="card-title"><div class="icon">📡</div>Estado del servidor</div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.6;">Verifica que el servidor Express y la conexión a MySQL están operativos. No requiere autenticación.</p>
+    <button class="btn btn-secondary" onclick="verificarEstado()">Verificar estado</button>
+    <div class="divider"></div>
+    <div class="status"><span class="dot" id="estado-dot"></span><span id="estado-status">En espera</span></div>
+    <div class="response" id="estado-response">// La respuesta aparecerá aquí</div>
+  </div>
+
+</div>
+
+<script>
+  // URL base de la API — ruta relativa válida cuando el HTML lo sirve el mismo servidor Express
+  const API_BASE = '/api';
+
+  // Token JWT activo almacenado en memoria durante la sesión del navegador
+  let tokenActivo = null;
+
+  // Actualiza el bloque de respuesta y el indicador de estado de color
+  function mostrarRespuesta(id, data, ok) {
+    document.getElementById(`${id}-response`).textContent = JSON.stringify(data, null, 2);
+    document.getElementById(`${id}-response`).className   = `response ${ok ? 'ok' : 'err'}`;
+    document.getElementById(`${id}-dot`).className        = `dot ${ok ? 'ok' : 'err'}`;
+    document.getElementById(`${id}-status`).textContent   = ok ? 'Respuesta recibida ✓' : 'Error en la respuesta ✗';
+  }
+
+  // Actualiza la barra superior con el token JWT activo
+  function actualizarTokenBar(token) {
+    tokenActivo = token;
+    document.getElementById('tokenDisplay').textContent = token
+      ? `${token.substring(0, 45)}...`
+      : 'Sin sesión iniciada';
+  }
+
+  function limpiarToken() { actualizarTokenBar(null); }
+
+  // Petición POST al endpoint de registro
+  async function registrar() {
+    const body = {
+      nombre:   document.getElementById('reg-nombre').value.trim(),
+      email:    document.getElementById('reg-email').value.trim(),
+      password: document.getElementById('reg-password').value,
+      rol:      document.getElementById('reg-rol').value.trim()
+    };
+    try {
+      const res  = await fetch(`${API_BASE}/auth/registro`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      mostrarRespuesta('reg', data, res.ok);
+    } catch (err) {
+      mostrarRespuesta('reg', { error: 'No se pudo conectar con el servidor.', detalle: err.message }, false);
+    }
+  }
+
+  // Petición POST al endpoint de login — guarda el token si la autenticación es satisfactoria
+  async function iniciarSesion() {
+    const body = {
+      email:    document.getElementById('login-email').value.trim(),
+      password: document.getElementById('login-password').value
+    };
+    try {
+      const res  = await fetch(`${API_BASE}/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      mostrarRespuesta('login', data, res.ok);
+      if (res.ok && data.token) actualizarTokenBar(data.token);
+    } catch (err) {
+      mostrarRespuesta('login', { error: 'No se pudo conectar con el servidor.', detalle: err.message }, false);
+    }
+  }
+
+  // Petición GET a la ruta protegida incluyendo el token en el encabezado Authorization
+  async function obtenerPerfil() {
+    if (!tokenActivo) { mostrarRespuesta('perfil', { exito: false, mensaje: 'No hay token activo. Inicie sesión primero.' }, false); return; }
+    try {
+      const res  = await fetch(`${API_BASE}/auth/perfil`, { headers: { 'Authorization': `Bearer ${tokenActivo}` } });
+      const data = await res.json();
+      mostrarRespuesta('perfil', data, res.ok);
+    } catch (err) {
+      mostrarRespuesta('perfil', { error: 'No se pudo conectar con el servidor.', detalle: err.message }, false);
+    }
+  }
+
+  // Petición GET al endpoint de health check del servidor
+  async function verificarEstado() {
+    try {
+      const res  = await fetch(`${API_BASE}/estado`);
+      const data = await res.json();
+      mostrarRespuesta('estado', data, res.ok);
+    } catch (err) {
+      mostrarRespuesta('estado', { error: 'Servidor no disponible.', detalle: err.message }, false);
+    }
+  }
+</script>
+
+</body>
+</html>
