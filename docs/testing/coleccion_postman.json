@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "leads-auth-api — GA7-220501096-AA5-EV02",
+    "description": "Colección de pruebas Postman para la API de autenticación del Sistema Integral de Gestión de Leads. Evidencia GA7-220501096-AA5-EV02. Aprendiz: JULIAN ENRIQUE OCAMPO LOPEZ — Ficha 3118307.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1 — Health check del servidor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/estado",
+          "host": ["{{base_url}}"],
+          "path": ["api", "estado"]
+        },
+        "description": "Verifica que el servidor y la base de datos MySQL están operativos. No requiere autenticación."
+      }
+    },
+    {
+      "name": "2 — Registro de usuario nuevo",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\",\n  \"rol\": \"asesor\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/registro",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "registro"]
+        },
+        "description": "Crea un nuevo usuario. La contraseña se hashea con bcrypt antes de persistirse en MySQL."
+      }
+    },
+    {
+      "name": "3 — Registro con correo duplicado (error controlado)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\",\n  \"rol\": \"asesor\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/registro",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "registro"]
+        },
+        "description": "Intenta registrar el mismo correo dos veces. Debe responder con error controlado."
+      }
+    },
+    {
+      "name": "4 — Login exitoso (obtiene token JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();",
+              "if (res.token) {",
+              "  pm.collectionVariables.set('token', res.token);",
+              "  console.log('Token guardado correctamente.');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Valida credenciales y emite token JWT. El script guarda el token automáticamente en la variable de colección para usarlo en las pruebas siguientes."
+      }
+    },
+    {
+      "name": "5 — Login con credenciales incorrectas (error 401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"contrasena_incorrecta\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Intenta login con contraseña incorrecta. Debe responder HTTP 401 con mensaje genérico."
+      }
+    },
+    {
+      "name": "6 — Perfil protegido con token válido (éxito)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/perfil",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "perfil"]
+        },
+        "description": "Accede a la ruta protegida usando el token JWT obtenido en el login. Debe responder HTTP 200 con los datos del usuario."
+      }
+    },
+    {
+      "name": "7 — Perfil protegido sin token (error 401)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/auth/perfil",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "perfil"]
+        },
+        "description": "Intenta acceder a la ruta protegida sin token. El middleware debe rechazar con HTTP 401."
+      }
+    }
+  ]
+}
