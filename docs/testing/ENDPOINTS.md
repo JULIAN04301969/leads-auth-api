@@ -9,12 +9,11 @@
 ---
 
 ## URL base
-```
+
 http://localhost:3000
-```
 
 **Tecnología:** Node.js v22 + Express + MySQL 9.5 + JWT + bcrypt  
-**Formato de respuesta:** `application/json`
+**Formato de respuesta:** application/json
 
 ---
 
@@ -22,10 +21,10 @@ http://localhost:3000
 
 | Método | Ruta | Acceso | Descripción |
 |--------|------|--------|-------------|
-| GET | `/api/estado` | Público | Health check del servidor y la base de datos |
-| POST | `/api/auth/registro` | Público | Crea un nuevo usuario con contraseña hasheada |
-| POST | `/api/auth/login` | Público | Valida credenciales y emite token JWT |
-| GET | `/api/auth/perfil` | Privado | Retorna datos del usuario autenticado |
+| GET | /api/estado | Público | Health check del servidor y la base de datos |
+| POST | /api/auth/registro | Público | Crea un nuevo usuario con contraseña hasheada con bcrypt |
+| POST | /api/auth/login | Público | Valida credenciales y emite token JWT firmado |
+| GET | /api/auth/perfil | Privado | Retorna datos del usuario autenticado |
 
 ---
 
@@ -33,28 +32,28 @@ http://localhost:3000
 
 | Campo | Detalle |
 |-------|---------|
-| URL completa | `http://localhost:3000/api/estado` |
+| URL completa | http://localhost:3000/api/estado |
 | Método | GET |
 | Acceso | Público |
 | Autenticación | No requerida |
 | Parámetros | Ninguno |
+| Content-Type | No requerido |
 
-**Respuesta exitosa (200):**
-```json
+Respuesta exitosa (200):
+
 {
   "exito": true,
   "mensaje": "API del Sistema de Gestión Integral de Leads operativa.",
-  "baseDeDatos": "Conectada"
+  "version": "1.0.0",
+  "timestamp": "2026-04-12T19:51:51.765Z"
 }
-```
 
-**Respuesta de error (500):**
-```json
+Respuesta de error (500):
+
 {
   "exito": false,
   "mensaje": "Error de conexión con la base de datos."
 }
-```
 
 ---
 
@@ -62,52 +61,64 @@ http://localhost:3000
 
 | Campo | Detalle |
 |-------|---------|
-| URL completa | `http://localhost:3000/api/auth/registro` |
+| URL completa | http://localhost:3000/api/auth/registro |
 | Método | POST |
 | Acceso | Público |
-| Content-Type | `application/json` |
+| Autenticación | No requerida |
+| Content-Type | application/json |
 
-**Cuerpo (Body):**
-```json
+Cuerpo (Body):
+
 {
   "nombre": "JULIAN OCAMPO",
-  "correo": "julianenriqueocampolopez@gmail.com",
-  "contrasena": "123456",
+  "email": "julian.ocampo.sena@gmail.com",
+  "password": "123456",
   "rol": "asesor"
 }
-```
 
-**Campos obligatorios:** `nombre`, `correo` (email válido), `contrasena` (mín. 6 caracteres), `rol`
+Campos obligatorios: nombre, email (formato email válido), password (mínimo 6 caracteres)
+Campo opcional: rol — valores aceptados: admin, asesor, supervisor. Si se omite o es inválido el sistema asigna asesor por defecto.
 
-**Respuesta exitosa (201):**
-```json
+Respuesta exitosa (201):
+
 {
   "exito": true,
   "mensaje": "Usuario registrado exitosamente.",
   "datos": {
-    "id": 3,
+    "id": 4,
     "nombre": "JULIAN OCAMPO",
-    "correo": "julianenriqueocampolopez@gmail.com",
+    "email": "julian.ocampo.sena@gmail.com",
     "rol": "asesor"
   }
 }
-```
 
-**Error correo duplicado (400):**
-```json
+Error — campos obligatorios faltantes (400):
+
 {
   "exito": false,
-  "mensaje": "El correo ya se encuentra registrado."
+  "mensaje": "Los campos nombre, email y password son obligatorios."
 }
-```
 
-**Error campos faltantes (400):**
-```json
+Error — formato de email inválido (400):
+
 {
   "exito": false,
-  "mensaje": "Todos los campos son obligatorios."
+  "mensaje": "El formato del correo electrónico no es válido."
 }
-```
+
+Error — password menor a 6 caracteres (400):
+
+{
+  "exito": false,
+  "mensaje": "La contraseña debe tener al menos 6 caracteres."
+}
+
+Error — email duplicado (409):
+
+{
+  "exito": false,
+  "mensaje": "Ya existe una cuenta registrada con este correo electrónico."
+}
 
 ---
 
@@ -115,42 +126,57 @@ http://localhost:3000
 
 | Campo | Detalle |
 |-------|---------|
-| URL completa | `http://localhost:3000/api/auth/login` |
+| URL completa | http://localhost:3000/api/auth/login |
 | Método | POST |
 | Acceso | Público |
-| Content-Type | `application/json` |
+| Autenticación | No requerida |
+| Content-Type | application/json |
 
-**Cuerpo (Body):**
-```json
+Cuerpo (Body):
+
 {
-  "correo": "julianenriqueocampolopez@gmail.com",
-  "contrasena": "123456"
+  "email": "julian.ocampo.sena@gmail.com",
+  "password": "123456"
 }
-```
 
-**Respuesta exitosa (200):**
-```json
+Campos obligatorios: email, password
+
+Respuesta exitosa (200):
+
 {
   "exito": true,
   "mensaje": "✅ Autenticación satisfactoria.",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
   "usuario": {
-    "id": 3,
+    "id": 4,
     "nombre": "JULIAN OCAMPO",
+    "email": "julian.ocampo.sena@gmail.com",
     "rol": "asesor"
   }
 }
-```
 
-**Error credenciales incorrectas (401):**
-```json
+Vigencia del token: 1 hora (3600 segundos). Configurado en variable de entorno JWT_EXPIRES_IN.
+
+Error — campos faltantes (400):
+
+{
+  "exito": false,
+  "mensaje": "Los campos email y password son obligatorios."
+}
+
+Error — credenciales incorrectas (401):
+
 {
   "exito": false,
   "mensaje": "Error en la autenticación. Credenciales incorrectas."
 }
-```
 
-**Vigencia del token:** 1 hora (3600 segundos)
+Error — cuenta deshabilitada (403):
+
+{
+  "exito": false,
+  "mensaje": "La cuenta está deshabilitada. Contacte al administrador."
+}
 
 ---
 
@@ -158,39 +184,46 @@ http://localhost:3000
 
 | Campo | Detalle |
 |-------|---------|
-| URL completa | `http://localhost:3000/api/auth/perfil` |
+| URL completa | http://localhost:3000/api/auth/perfil |
 | Método | GET |
 | Acceso | Privado |
-| Header obligatorio | `Authorization: Bearer <token>` |
+| Autenticación | Requerida — token JWT vigente |
+| Header obligatorio | Authorization: Bearer <token> |
+| Parámetros Body | Ninguno |
 
-**Cómo obtener el token:** ejecutar POST /api/auth/login y copiar el valor del campo `token`.
+Cómo obtener el token: ejecutar POST /api/auth/login con credenciales válidas y copiar el valor del campo token de la respuesta.
 
-**Respuesta exitosa (200):**
-```json
+Respuesta exitosa (200):
+
 {
   "exito": true,
+  "mensaje": "Perfil obtenido correctamente.",
   "datos": {
-    "id": 3,
+    "id": 4,
     "nombre": "JULIAN OCAMPO",
-    "correo": "julianenriqueocampolopez@gmail.com",
+    "email": "julian.ocampo.sena@gmail.com",
     "rol": "asesor",
-    "creado_en": "2026-04-10T..."
+    "creado_en": "2026-04-12T20:00:00.000Z"
   }
 }
-```
 
-**Error sin token (401):**
-```json
+Error — sin token (401):
+
 {
   "exito": false,
-  "mensaje": "Token no proporcionado."
+  "mensaje": "Acceso denegado. Se requiere token de autenticación."
 }
-```
 
-**Error token inválido o expirado (401):**
-```json
+Error — token inválido o expirado (401):
+
 {
   "exito": false,
   "mensaje": "Token inválido o expirado."
 }
-```
+
+Error — usuario no encontrado o inactivo (404):
+
+{
+  "exito": false,
+  "mensaje": "Usuario no encontrado o inactivo."
+}
