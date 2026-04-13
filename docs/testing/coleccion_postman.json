@@ -39,7 +39,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\",\n  \"rol\": \"asesor\"\n}",
+          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"email\": \"julian.ocampo.sena@gmail.com\",\n  \"password\": \"123456\",\n  \"rol\": \"asesor\"\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
@@ -59,7 +59,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\",\n  \"rol\": \"asesor\"\n}",
+          "raw": "{\n  \"nombre\": \"JULIAN OCAMPO\",\n  \"email\": \"julian.ocampo.sena@gmail.com\",\n  \"password\": \"123456\",\n  \"rol\": \"asesor\"\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
@@ -94,7 +94,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"123456\"\n}",
+          "raw": "{\n  \"email\": \"julian.ocampo.sena@gmail.com\",\n  \"password\": \"123456\"\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
@@ -114,7 +114,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"correo\": \"julianenriqueocampolopez@gmail.com\",\n  \"contrasena\": \"contrasena_incorrecta\"\n}",
+          "raw": "{\n  \"email\": \"julianenriqueocampolopez@gmail.com\",\n  \"password\": \"contrasena_incorrecta\"\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
