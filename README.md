@@ -96,3 +96,5 @@ git push origin feature/backend-auth
 API REST de autenticaci�n con Node.js, Express, MySQL y JWT. Pruebas unitarias Jest 20/20.
 ## M�dulo Frontend - Gesti�n de Leads
 M�dulo CRUD de leads con tabla interactiva, filtros en tiempo real y badges de estado. Autor: mgarcia-frontend.
+## M�dulo Frontend - Autenticaci�n UI
+M�dulo de login, gesti�n de sesi�n JWT y comunicaci�n HTTP con el backend. Autor: crodriguez-ui.
