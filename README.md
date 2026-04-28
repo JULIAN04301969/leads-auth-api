@@ -85,3 +85,5 @@ La colecci√≥n de pruebas est√° en docs/testing/coleccion_postman.json
 ## Repositorio
 
 https://github.com/JULIAN04301969/leads-auth-api
+## MÛdulo Frontend - GestiÛn de Leads
+MÛdulo CRUD de leads con tabla interactiva, filtros en tiempo real y badges de estado. Autor: mgarcia-frontend.
