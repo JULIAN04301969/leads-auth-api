@@ -92,5 +92,7 @@ echo API REST de autenticaciÃ³n con Node.js, Express, MySQL y JWT. Pruebas unita
 git add README.md
 git commit -m "docs(backend): documentar mÃ³dulo de autenticaciÃ³n y pruebas Jest"
 git push origin feature/backend-auth
-## Módulo Backend
-API REST de autenticación con Node.js, Express, MySQL y JWT. Pruebas unitarias Jest 20/20.
+## Mï¿½dulo Backend
+API REST de autenticaciï¿½n con Node.js, Express, MySQL y JWT. Pruebas unitarias Jest 20/20.
+## Mï¿½dulo Frontend - Gestiï¿½n de Leads
+Mï¿½dulo CRUD de leads con tabla interactiva, filtros en tiempo real y badges de estado. Autor: mgarcia-frontend.
