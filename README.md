@@ -85,3 +85,12 @@ La colecci贸n de pruebas est谩 en docs/testing/coleccion_postman.json
 ## Repositorio
 
 https://github.com/JULIAN04301969/leads-auth-api
+
+echo. >> README.md
+echo ## M贸dulo Backend >> README.md
+echo API REST de autenticaci贸n con Node.js, Express, MySQL y JWT. Pruebas unitarias Jest 20/20. >> README.md
+git add README.md
+git commit -m "docs(backend): documentar m贸dulo de autenticaci贸n y pruebas Jest"
+git push origin feature/backend-auth
+## M骴ulo Backend
+API REST de autenticaci髇 con Node.js, Express, MySQL y JWT. Pruebas unitarias Jest 20/20.
