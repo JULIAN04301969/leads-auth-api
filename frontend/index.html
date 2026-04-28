@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Integral de Gestión de Leads</title>
+
+  <!-- Materialize CSS — requerido por el material formativo SENA -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
+  <!-- Estilos propios del sistema -->
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ============================================================
+     VISTA DE LOGIN
+     Se muestra cuando no hay sesión activa.
+     El formulario se conecta al backend real mediante authService.
+     ============================================================ -->
+<div id="vista-login">
+  <div class="login-card z-depth-3">
+
+    <!-- Encabezado de la tarjeta -->
+    <div class="login-header teal darken-2">
+      <i class="material-icons large white-text">business_center</i>
+      <h5 class="white-text center-align" style="margin:8px 0 4px;">
+        Sistema de Gestión de Leads
+      </h5>
+      <p class="white-text center-align"
+         style="margin:0; font-size:0.82rem; opacity:.85;">
+        SENA · Análisis y Desarrollo de Software · Ficha 3118307
+      </p>
+    </div>
+
+    <!-- Cuerpo del formulario -->
+    <div class="login-body">
+
+      <!-- Mensaje de error del backend -->
+      <p id="login-error" class="red-text center-align"></p>
+
+      <form id="form-login" novalidate>
+        <div class="input-field">
+          <i class="material-icons prefix">email</i>
+          <input id="login-email" type="email"
+                 required autocomplete="email">
+          <label for="login-email">Correo electrónico</label>
+        </div>
+
+        <div class="input-field">
+          <i class="material-icons prefix">lock</i>
+          <input id="login-password" type="password"
+                 required autocomplete="current-password">
+          <label for="login-password">Contraseña</label>
+        </div>
+
+        <button id="btn-login"
+                class="btn btn-large waves-effect waves-light teal darken-2 full-width"
+                type="submit">
+          Iniciar Sesión
+          <i class="material-icons right">send</i>
+        </button>
+      </form>
+
+      <p class="center-align grey-text" style="margin-top:14px; font-size:0.78rem;">
+        Backend: <code>http://localhost:3000</code> &nbsp;·&nbsp; JWT Auth
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     VISTA PRINCIPAL DE LA APLICACIÓN
+     Solo visible tras autenticación exitosa.
+     ============================================================ -->
+<div id="vista-app" style="display:none;">
+
+  <!-- Barra de navegación superior -->
+  <nav class="teal darken-2">
+    <div class="nav-wrapper" style="padding:0 20px;">
+      <a href="#" class="brand-logo" style="font-size:1.15rem;">
+        <i class="material-icons"
+           style="vertical-align:middle; margin-right:8px;">business_center</i>
+        Gestión de Leads
+      </a>
+      <a href="#" data-target="sidenav-principal" class="sidenav-trigger">
+        <i class="material-icons">menu</i>
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li>
+          <a href="#" class="btn-cerrar-sesion">
+            <i class="material-icons left">exit_to_app</i>Cerrar sesión
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Barra lateral fija -->
+  <ul id="sidenav-principal"
+      class="sidenav sidenav-fixed teal darken-3">
+
+    <!-- Perfil del usuario autenticado -->
+    <li>
+      <div class="user-view" style="padding:20px 16px 12px;">
+        <span class="white-text name" id="usuario-nombre">Usuario</span><br>
+        <span id="usuario-rol"
+              style="font-size:.75rem; color:rgba(255,255,255,.75);">ROL</span>
+      </div>
+    </li>
+
+    <!-- Ítems de navegación -->
+    <li>
+      <a class="waves-effect activo" data-vista="leads" href="#">
+        <i class="material-icons">people</i>Leads
+      </a>
+    </li>
+    <li>
+      <a class="waves-effect" data-vista="seguimientos" href="#">
+        <i class="material-icons">assignment</i>Seguimientos
+      </a>
+    </li>
+
+    <!-- Solo visible para administradores -->
+    <li id="menu-registro" style="display:none;">
+      <a class="waves-effect modal-trigger" href="#modal-registro">
+        <i class="material-icons">person_add</i>Registrar Usuario
+      </a>
+    </li>
+
+    <li><div class="divider"></div></li>
+
+    <li>
+      <a class="waves-effect" data-vista="config" href="#">
+        <i class="material-icons">settings</i>Configuración
+      </a>
+    </li>
+    <li>
+      <a class="waves-effect btn-cerrar-sesion" href="#">
+        <i class="material-icons">exit_to_app</i>Cerrar sesión
+      </a>
+    </li>
+  </ul>
+
+  <!-- Contenido principal -->
+  <main>
+
+    <!-- ========================================================
+         SECCIÓN: GESTIÓN DE LEADS
+         ======================================================== -->
+    <section id="seccion-leads" class="vista-seccion">
+
+      <!-- Encabezado de sección -->
+      <div class="row valign-wrapper" style="margin-bottom:8px;">
+        <div class="col s12 m7">
+          <h5 style="margin:0;">
+            <i class="material-icons"
+               style="vertical-align:middle; margin-right:6px;">people</i>
+            Gestión de Leads
+          </h5>
+          <span class="grey-text text-darken-1" id="contador-leads"
+                style="font-size:.85rem;">Cargando...</span>
+        </div>
+        <div class="col s12 m5 right-align">
+          <button id="btn-nuevo-lead"
+                  class="btn waves-effect waves-light teal darken-2">
+            <i class="material-icons left">add</i>Nuevo Lead
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="row" style="margin-bottom:8px;">
+        <div class="col s12 m6">
+          <div class="input-field" style="margin:0;">
+            <i class="material-icons prefix">search</i>
+            <input id="buscar-lead" type="text">
+            <label for="buscar-lead">Buscar por nombre o email</label>
+          </div>
+        </div>
+        <div class="col s12 m3">
+          <div class="input-field" style="margin:0;">
+            <select id="filtro-estado">
+              <option value="">Todos los estados</option>
+              <option>Nuevo</option>
+              <option>En proceso</option>
+              <option>Calificado</option>
+              <option>Cerrado</option>
+              <option>Descartado</option>
+            </select>
+            <label>Estado</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de leads -->
+      <div class="card z-depth-1" style="padding:0;">
+        <table class="striped highlight responsive-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Estado</th>
+              <th>Prioridad</th>
+              <th>Último contacto</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody">
+            <tr>
+              <td colspan="7" class="center-align grey-text"
+                  style="padding:30px;">Cargando datos...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECCIÓN: SEGUIMIENTOS
+         ======================================================== -->
+    <section id="seccion-seguimientos"
+             class="vista-seccion" style="display:none;">
+      <h5>
+        <i class="material-icons" style="vertical-align:middle;">assignment</i>
+        Seguimientos
+      </h5>
+      <div class="card z-depth-1">
+        <div class="card-content center-align grey-text"
+             style="padding:60px 20px;">
+          <i class="material-icons large">assignment_late</i>
+          <p style="font-size:1rem;">Módulo de seguimientos en desarrollo.</p>
+          <p class="grey-text" style="font-size:.85rem;">
+            Se integrará con la tabla <code>seguimiento</code> del schema
+            <code>sistema_gestion_leads</code> en la siguiente fase del proyecto.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         SECCIÓN: CONFIGURACIÓN
+         ======================================================== -->
+    <section id="seccion-config"
+             class="vista-seccion" style="display:none;">
+      <h5>
+        <i class="material-icons" style="vertical-align:middle;">settings</i>
+        Configuración del sistema
+      </h5>
+
+      <div class="row">
+        <!-- Card health check -->
+        <div class="col s12 m6">
+          <div class="card z-depth-1">
+            <div class="card-content">
+              <span class="card-title">Estado del servidor</span>
+              <p class="grey-text" style="font-size:.9rem;">
+                Verifica en tiempo real la conectividad con el backend
+                y la base de datos MySQL.
+              </p>
+              <button id="btn-health-check"
+                      class="btn waves-effect waves-light teal darken-2">
+                <i class="material-icons left">wifi</i>Verificar conexión
+              </button>
+              <p id="health-resultado" style="margin-top:14px;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card información del entorno -->
+        <div class="col s12 m6">
+          <div class="card z-depth-1">
+            <div class="card-content">
+              <span class="card-title">Información del entorno</span>
+              <table class="striped" style="font-size:.85rem;">
+                <tbody>
+                  <tr>
+                    <td><strong>Backend</strong></td>
+                    <td><code>http://localhost:3000</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Base de datos auth</strong></td>
+                    <td><code>leads_db (MySQL 9.5)</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Base de datos negocio</strong></td>
+                    <td><code>sistema_gestion_leads</code></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Autenticación</strong></td>
+                    <td>JWT · bcrypt (salt 10)</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Frontend</strong></td>
+                    <td>HTML5 · ES Modules · Materialize 1.0</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Versión API</strong></td>
+                    <td>2.0.0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+
+<!-- ============================================================
+     MODAL: FORMULARIO DE LEAD (crear / editar)
+     ============================================================ -->
+<div id="modal-lead" class="modal" style="max-width:680px; width:90%;">
+  <div class="modal-content">
+    <h5 id="modal-lead-titulo">Nuevo Lead</h5>
+    <input type="hidden" id="lead-id-edicion">
+
+    <form id="form-lead" novalidate>
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <input id="lead-nombre" type="text">
+          <label for="lead-nombre">Nombre completo *</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <input id="lead-email" type="email">
+          <label for="lead-email">Correo electrónico *</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m4">
+          <select id="lead-estado">
+            <option value="Nuevo">Nuevo</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Calificado">Calificado</option>
+            <option value="Cerrado">Cerrado</option>
+            <option value="Descartado">Descartado</option>
+          </select>
+          <label>Estado</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <select id="lead-prioridad">
+            <option value="Alta">Alta</option>
+            <option value="Media">Media</option>
+            <option value="Baja">Baja</option>
+          </select>
+          <label>Prioridad</label>
+        </div>
+        <div class="input-field col s12 m4">
+          <select id="lead-fuente">
+            <option value="Web">Web</option>
+            <option value="Referido">Referido</option>
+            <option value="Redes sociales">Redes sociales</option>
+            <option value="Llamada entrante">Llamada entrante</option>
+            <option value="Evento">Evento</option>
+          </select>
+          <label>Fuente</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12">
+          <textarea id="lead-feedback"
+                    class="materialize-textarea"></textarea>
+          <label for="lead-feedback">Feedback / Notas</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-close btn-flat waves-effect">Cancelar</button>
+    <button id="btn-guardar-lead"
+            class="btn waves-effect waves-light teal darken-2">
+      <i class="material-icons left">save</i>Guardar
+    </button>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     MODAL: CONFIRMACIÓN DE ELIMINACIÓN
+     ============================================================ -->
+<div id="modal-confirmar" class="modal" style="max-width:420px;">
+  <div class="modal-content">
+    <h5>Confirmar eliminación</h5>
+    <p>
+      ¿Está seguro de que desea eliminar el lead
+      <strong id="confirm-lead-id"></strong>?
+      Esta acción no se puede deshacer.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-close btn-flat waves-effect">Cancelar</button>
+    <button id="btn-confirmar-eliminar"
+            class="btn waves-effect waves-light red">
+      <i class="material-icons left">delete_forever</i>Eliminar
+    </button>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     MODAL: REGISTRO DE USUARIO (solo administradores)
+     ============================================================ -->
+<div id="modal-registro" class="modal" style="max-width:560px; width:90%;">
+  <div class="modal-content">
+    <h5>Registrar nuevo usuario</h5>
+    <form id="form-registro" novalidate>
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <input id="reg-nombre" type="text" required>
+          <label for="reg-nombre">Nombre completo *</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <input id="reg-email" type="email" required>
+          <label for="reg-email">Correo electrónico *</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <input id="reg-password" type="password"
+                 required minlength="6">
+          <label for="reg-password">Contraseña (mín. 6 caracteres) *</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <select id="reg-rol">
+            <option value="asesor">Asesor</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="admin">Administrador</option>
+          </select>
+          <label>Rol</label>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="modal-close btn-flat waves-effect">Cancelar</button>
+    <button type="submit" form="form-registro"
+            class="btn waves-effect waves-light teal darken-2">
+      <i class="material-icons left">person_add</i>Registrar
+    </button>
+  </div>
+</div>
+
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!-- Módulo principal — ES Modules nativos del navegador -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
