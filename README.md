@@ -85,3 +85,5 @@ La colecciÃ³n de pruebas estÃ¡ en docs/testing/coleccion_postman.json
 ## Repositorio
 
 https://github.com/JULIAN04301969/leads-auth-api
+## Módulo Frontend - Autenticación UI
+Módulo de login, gestión de sesión JWT y comunicación HTTP con el backend. Autor: crodriguez-ui.
