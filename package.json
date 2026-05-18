@@ -8,7 +8,14 @@
     "dev": "nodemon src/index.js",
     "test": "jest --forceExit --detectOpenHandles --verbose"
   },
-  "keywords": ["leads", "api", "rest", "jwt", "mysql", "express"],
+  "keywords": [
+    "leads",
+    "api",
+    "rest",
+    "jwt",
+    "mysql",
+    "express"
+  ],
   "author": "JULIAN ENRIQUE OCAMPO LOPEZ",
   "license": "ISC",
   "dependencies": {
@@ -20,12 +27,15 @@
     "mysql2": "^3.22.0"
   },
   "devDependencies": {
+    "cypress": "^15.15.0",
     "jest": "^30.3.0",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"]
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
   }
 }
