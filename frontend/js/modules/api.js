@@ -11,7 +11,10 @@
 // Rama:  feature/frontend-auth
 // ============================================================
 
-const API_BASE = 'http://localhost:3000/api';
+// Determina automáticamente la URL del backend según el entorno
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3000/api'
+  : 'https://leads-auth-api-production.up.railway.app/api';
 
 // Claves de sessionStorage.
 // sessionStorage se vacía al cerrar la pestaña — más seguro
