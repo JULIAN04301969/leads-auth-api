@@ -40,8 +40,7 @@
                                ]
              },
     "pnpm":  {
-                 "onlyBuiltDependencies":  [
-                                               "cypress"
-                                           ]
-             }
+                 "onlyBuiltDependencies": ["cypress", "bcryptjs", "esbuild"]
+}  
 }
+
