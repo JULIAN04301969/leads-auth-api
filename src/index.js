@@ -39,6 +39,9 @@ app.use(express.json());
 // express.urlencoded() permite recibir datos de formularios HTML estándar
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ NUEVA LÍNEA: Sirve el frontend real (Materialize, lógica completa)
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
 // Sirve los archivos estáticos de la carpeta public (interfaz web de prueba)
 app.use(express.static(path.join(__dirname, '..', 'public')));
 

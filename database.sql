@@ -1,7 +1,8 @@
 -- ============================================================
 -- Script de creación de base de datos y tabla de usuarios
--- Sistema de Gestión Integral de Leads
--- Motor: MySQL 8.x / 9.x
+-- Sistema Integral de Gestión de Leads
+-- Evidencia: GA8-220501096-AA1-EV01
+-- Motor: MySQL 9.5 (Community Server)
 -- ============================================================
 -- Este script debe ejecutarse una única vez desde MySQL Workbench
 -- antes de iniciar el servidor Node.js por primera vez.
