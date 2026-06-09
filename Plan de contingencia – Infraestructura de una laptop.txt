@@ -1,0 +1,38 @@
+
+Plan de contingencia – Infraestructura de una laptop
+Fecha: 8 de junio de 2026
+Responsable: Julián Enrique Ocampo López
+
+Riesgos identificados:
+
+Falla del disco duro o SSD.
+
+Corte de energía o corrupción del sistema operativo.
+
+Error humano (borrado accidental de archivos o base de datos).
+
+Medidas preventivas:
+
+Respaldo automático del código fuente: git push a GitHub después de cada cambio significativo.
+
+Respaldo diario de la base de datos: script mysqldump que se ejecuta al cerrar la laptop y guarda en OneDrive.
+
+Uso de OneDrive para sincronizar la carpeta C:\GA10-AA3-EV01 en la nube.
+
+Documentación de los comandos de instalación (Node.js, pnpm, XAMPP) para poder reinstalar rápidamente.
+
+Procedimiento de recuperación (RTO estimado: 2 horas):
+
+Reinstalar Windows desde USB de recuperación (si es necesario).
+
+Instalar Node.js, Git, XAMPP, VSC.
+
+Clonar repositorio desde GitHub: git clone https://github.com/JULIAN04301969/leads-auth-api.git
+
+Restaurar la base de datos desde el último dump en OneDrive.
+
+Ejecutar pnpm install y pnpm run dev.
+
+Limitaciones asumidas:
+No se garantiza alta disponibilidad (99.9%) por falta de redundancia; sin embargo, la integridad de los datos está protegida mediante respaldos externos (GitHub y OneDrive).
+

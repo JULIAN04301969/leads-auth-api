@@ -1,0 +1,23 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 60
+      arrivalRate: 4
+  defaults:
+    headers:
+      Content-Type: "application/json"
+scenarios:
+  - name: "Login y perfil"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "prueba@ejemplo.com"
+            password: "123456"
+          capture:
+            - json: "$.token"
+              as: "token"
+      - get:
+          url: "/api/auth/perfil"
+          headers:
+            Authorization: "Bearer {{ token }}"
